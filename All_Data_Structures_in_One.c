@@ -1667,8 +1667,13 @@ void deleteMyListBST() {
                             break;
                         } 
                     } else {
-                        prevNode->left = NULL;
-                        free(minNode);
+                        if (minNode->left == NULL && minNode->right == NULL) {
+                            prevNode->left = NULL;
+                            free(minNode);
+                        } else {
+                            prevNode->left = minNode->right;
+                            free(minNode);
+                        }
                         break;
                     }
                 } else if (temp->right == NULL) {       // right sub-tree is not present
@@ -1701,8 +1706,13 @@ void deleteMyListBST() {
                             break;
                         } 
                     } else {
-                        prevNode->right = NULL;
-                        free(maxNode);
+                        if (maxNode->left == NULL && maxNode->right == NULL) {
+                            prevNode->right = NULL;
+                            free(maxNode);
+                        } else {
+                            prevNode->right = maxNode->left;
+                            free(maxNode);
+                        }
                         break;
                     }
                 }// printf("Developed By: Hardik Kushwaha")
