@@ -150,7 +150,7 @@ struct bstNode {
     struct bstNode *left, *right;
 };
 struct bstNode *root = NULL;
-int totalNodes = 0;
+int totalNodesMyListBST = 0;
 // *******************************************************
 
 int main() {
@@ -1553,7 +1553,7 @@ void MyListBST() {
                 if (root == NULL) {
                     printf("Empty BST!\n");
                 } else {
-                    printf("Total Nodes in BST: %d\n", totalNodes);
+                    printf("Total Nodes in BST: %d\n", totalNodesMyListBST);
                 }
                 break;
             case 6:
@@ -1574,7 +1574,7 @@ void insertMyListBST() {
     newP->data = element;
     newP->left = NULL;
     newP->right = NULL;
-    totalNodes++;
+    totalNodesMyListBST++;
 
     if(root == NULL) {
         root = newP;
@@ -1609,7 +1609,7 @@ void deleteMyListBST() {
         return;
     }
     int element, state = 0, max = 0, min;
-    totalNodes--;
+    totalNodesMyListBST--;
     // printf("Developed By: Hardik Kushwaha")
     if (root->left == NULL && root->right == NULL) {            // if only root is present
         printf("Root %d deleted successfully!\n", root->data);
