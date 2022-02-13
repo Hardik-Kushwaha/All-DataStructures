@@ -139,15 +139,18 @@ void displayMyArrayBST();
 // 12. Linked List Implementation of Binary Search Tree
 void MyListBST();
 void insertMyListBST();
+void deleteMyListBST();
 void displayMyListBST();
 void preorderTraversalMyListBST();
 void inorderTraversalMyListBST();
 void postorderTraversalMyListBST();
+void searchingMyListBST();
 struct bstNode {
     int data;
     struct bstNode *left, *right;
 };
 struct bstNode *root = NULL;
+int totalNodes = 0;
 // *******************************************************
 
 int main() {
@@ -1531,24 +1534,37 @@ void MyListBST() {
         printf("\n ------------------------------------------------------------------");
         printf("\n|               Linked List Implementation of BST                  |");
         printf("\n ------------------------------------------------------------------");
-        printf("\n1. Insert\n2. Display\n3. Exit\nEnter your choice: ");
+        printf("\n1. Insert\n2. Delete\n3. Display\n4. Searching\n5. Total Nodes\n6. Exit\nEnter your choice: ");
         scanf("%d",&choice);
-        switch(choice)
-        {                                                        // Hardik Kushwaha
+        switch(choice) {                                                        
             case 1:
                 insertMyListBST();
                 break;
             case 2:
-                displayMyListBST();
+                deleteMyListBST();
                 break;
             case 3:
+                displayMyListBST();
+                break;
+            case 4:
+                searchingMyListBST();
+                break;
+            case 5:
+                if (root == NULL) {
+                    printf("Empty BST!\n");
+                } else {
+                    printf("Total Nodes in BST: %d\n", totalNodes);
+                }
+                break;
+            case 6:
                 printf("Exited successfully!\n");
+                // printf("Developed By: Hardik Kushwaha")
                 break;
             default:
                 printf("Invalid choice!\n");
                 break;
         }
-    } while(choice != 3);
+    } while(choice != 6);
 }                                                                 // Hardik Kushwaha
 void insertMyListBST() {
     int element;
@@ -1558,10 +1574,11 @@ void insertMyListBST() {
     newP->data = element;
     newP->left = NULL;
     newP->right = NULL;
+    totalNodes++;
 
     if(root == NULL) {
         root = newP;
-        printf("Element inserted successfully!\n");
+        printf("Root inserted successfully!\n");
         return;
     }
 
@@ -1570,7 +1587,7 @@ void insertMyListBST() {
         if(element <= temp->data) {
             if(temp->left == NULL) {
                 temp->left = newP;
-                printf("Element inserted successfully!\n");
+                printf("Node inserted successfully!\n");
                 return;
             } else {
                 temp = temp->left;
@@ -1578,12 +1595,128 @@ void insertMyListBST() {
         } else {
             if(temp->right == NULL) {
                 temp->right = newP;
-                printf("Element inserted successfully!\n");
+                printf("Node inserted successfully!\n");
                 return;
             } else {
                 temp = temp->right;
             }
         }
+    }
+}
+void deleteMyListBST() {
+    if(root == NULL) {
+        printf("Empty BST!\n");
+        return;
+    }
+    int element, state = 0, max = 0, min;
+    totalNodes--;
+    // printf("Developed By: Hardik Kushwaha")
+    if (root->left == NULL && root->right == NULL) {            // if only root is present
+        printf("Root %d deleted successfully!\n", root->data);
+        root = NULL;
+        return;
+    }
+    printf("Enter the element: ");
+    scanf("%d", &element);
+    struct bstNode *prevNode, *temp = root, *minNode, *maxNode;
+
+    while (temp != NULL) {
+        if (element <= temp->data) {
+            if(element == temp->data) {
+                state = 1;
+
+                if (temp->left == NULL && temp->right == NULL) {// if element node is leaf
+                    if (prevNode->left == temp) {
+                        printf("Node %d deleted successfully!\n", temp->data);
+                        prevNode->left = NULL;
+                        free(temp);
+                        break;
+                    } else {
+                        printf("Node %d deleted successfully!\n", temp->data);
+                        prevNode->right = NULL;
+                        free(temp);
+                        break;
+                    }
+                } else if (temp->left == NULL || (temp->left != NULL && temp->right != NULL)) {     // if left sub-tree is not present or both sub-tree is present 
+                    minNode = temp->right;
+                    min = minNode->data;
+                    prevNode = temp;
+                    while (minNode != NULL) {           // if left sub-tree of temp->right is present
+                        if (min > minNode->data) {
+                            min = minNode->data;
+                        }
+                        if (minNode->left == NULL && minNode->right == NULL) {
+                            break;
+                        }
+                        if (minNode->left == NULL) {
+                            break;
+                        }
+                        prevNode = minNode;
+                        minNode = minNode->left;
+                    }// printf("Developed By: Hardik Kushwaha")
+                    printf("Node %d deleted successfully!\n", temp->data);
+                    temp->data = min;
+                    if (minNode == temp->right) {           // left sub-tree of temp->right is not present
+                        if (minNode->right == NULL && minNode->left == NULL) {  // right sub-tree of temp->right is also not present
+                            prevNode->right = NULL;
+                            free(minNode);
+                            break;
+                        } else if (minNode->right != NULL) {    // right sub-tree of temp->right is present
+                            prevNode->right = minNode->right;
+                            free(minNode);
+                            break;
+                        } 
+                    } else {
+                        prevNode->left = NULL;
+                        free(minNode);
+                        break;
+                    }
+                } else if (temp->right == NULL) {       // right sub-tree is not present
+                    maxNode = temp->left;
+                    max = maxNode->data;
+                    prevNode = temp;
+                    while (maxNode != NULL) {
+                        if (max < maxNode->data) {
+                                max = maxNode->data;
+                            }
+                            if (maxNode->left == NULL && maxNode->right == NULL) {
+                                break;
+                            }
+                            if (maxNode->right == NULL) {
+                                break;
+                            }
+                            prevNode = maxNode;
+                            maxNode = maxNode->right;
+                    }
+                    printf("Node %d deleted successfully!\n", temp->data);
+                    temp->data = max;
+                    if (maxNode == temp->left) {           // right sub-tree of temp->left is not present
+                        if (maxNode->right == NULL && maxNode->left == NULL) {  // left sub-tree of temp->left is also not present
+                            prevNode->left = NULL;
+                            free(maxNode);
+                            break;
+                        } else if (maxNode->left != NULL) {    // left sub-tree of temp->left is present
+                            prevNode->left = maxNode->left;
+                            free(maxNode);
+                            break;
+                        } 
+                    } else {
+                        prevNode->right = NULL;
+                        free(maxNode);
+                        break;
+                    }
+                }// printf("Developed By: Hardik Kushwaha")
+            } else {
+                prevNode = temp;
+                temp = temp->left;
+            }
+        } else {
+            prevNode = temp;
+            temp = temp->right;
+        }
+    }
+    if (state == 0) {
+        printf("Node not present in the Tree!\n");
     }
 }
 void displayMyListBST() {
@@ -1592,17 +1725,30 @@ void displayMyListBST() {
         return; 
     }
     struct bstNode *temp = root;
-    printf("Preorder Traversal of Binary Search Tree is:");
-    preorderTraversalMyListBST(temp);   
-    printf("\n");
-
-    printf("Inorder Traversal of Binary Search Tree is:");
-    inorderTraversalMyListBST(temp);   
-    printf("\n"); 
-
-    printf("Postorder Traversal of Binary Search Tree is:");
-    postorderTraversalMyListBST(temp);
-    printf("\n"); 
+    // printf("Developed By: Hardik Kushwaha")
+    int choice;
+    printf("\nTree Traversal\n1. Inorder Traversal\n2. Preorder Traversal\n3. Postorder Traversal\nEnter the choice: ");
+    scanf("%d",&choice);
+    switch (choice) {
+        case 1:
+            printf("Inorder Traversal of BST is: ");
+            inorderTraversalMyListBST(temp);   
+            printf("\n");
+            break;
+        case 2:
+            printf("Preorder Traversal of BST is: ");
+            preorderTraversalMyListBST(temp);   
+            printf("\n");
+            break;
+        case 3:
+            printf("Postorder Traversal of BST is: ");
+            postorderTraversalMyListBST(temp);
+            printf("\n");
+            break;
+        default:
+            printf("Invalid Choice!\n");
+            break;
+    }
 }
 void preorderTraversalMyListBST(struct bstNode *temp) {
     if(temp == NULL)
@@ -1624,4 +1770,33 @@ void postorderTraversalMyListBST(struct bstNode *temp) {
     postorderTraversalMyListBST(temp->left);
     postorderTraversalMyListBST(temp->right);
     printf("%d ", temp->data);
+}
+void searchingMyListBST() {
+    if(root == NULL) {
+        printf("Empty BST!\n");
+        return;
+    }
+    int element, state = 0;
+    printf("Enter the element: ");
+    scanf("%d", &element);
+    struct bstNode *temp = root;
+
+    while (temp != NULL) {
+        if (element <= temp->data) {
+            if(element == temp->data) {
+                state = 1;
+                break;
+            } else {
+                temp = temp->left;
+            }
+        } else {
+            temp = temp->right;
+        }
+    }
+    // printf("Developed By: Hardik Kushwaha")
+    if (state == 1) {
+        printf("Element is Present!\n");
+    } else {
+        printf("Element not Found!\n");
+    }
 }
