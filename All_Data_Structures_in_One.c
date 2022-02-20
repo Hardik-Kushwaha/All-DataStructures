@@ -130,11 +130,15 @@ void dequeueMyStackQueue();
 void displayMyStackQueue();
 // *******************************************************
 // 11. Array Implementation of Binary Search Tree
-#define MaxBST 30
-int bst[MaxBST] = {0}, lengthMyBST = 0;
+#define MaxBST 50
+int bst[MaxBST] = {0}, totalNodesMyArrayBST = 0, rootArray = 1;
 void MyArrayBST();
 void insertMyArrayBST();
 void displayMyArrayBST();
+void preorderTraversalMyArrayBST();
+void inorderTraversalMyArrayBST();
+void postorderTraversalMyArrayBST();
+void searchingMyArrayBST();
 // *******************************************************
 // 12. Linked List Implementation of Binary Search Tree
 void MyListBST();
@@ -1463,7 +1467,7 @@ void MyArrayBST() {
         printf("\n ------------------------------------------------------------------");
         printf("\n|          Array Implementation of Binary Search Tree              |");
         printf("\n ------------------------------------------------------------------");
-        printf("\n1. Insert\n2. Display\n3. Exit\nEnter your choice: ");
+        printf("\n1. Insert\n2. Display\n3. Searching\n4. Total Nodes\n5. Exit\nEnter your choice: ");
         scanf("%d",&choice);
         switch(choice)
         {                                                        // Hardik Kushwaha
@@ -1474,31 +1478,44 @@ void MyArrayBST() {
                 displayMyArrayBST();
                 break;
             case 3:
+                searchingMyArrayBST();
+                break;
+            case 4:
+                if (totalNodesMyArrayBST == 0) {
+                    printf("Empty BST!\n");
+                } else {
+                    printf("Total Nodes in BST: %d\n",totalNodesMyArrayBST);
+                }
+                break;
+            case 5:
                 printf("Exited successfully!\n");
                 break;
             default:
                 printf("Invalid choice!\n");
                 break;
         }
-    } while(choice != 3);
+    } while(choice != 5);
 }
 void insertMyArrayBST() {
-    int element;
+    int element, i = rootArray;
     printf("Enter the element: ");
     scanf("%d", &element);
-    if(bst[1] == 0) {                                            // Hardik Kushwaha
-        bst[1] = element;
-        printf("Element inserted successfully!\n");
-        lengthMyBST++;
+    while (element <= 0) {
+        printf("Enter the valid element (element must be greater than zero): ");
+        scanf("%d", &element);
+    }
+    totalNodesMyArrayBST++;
+    
+    if(bst[rootArray] == 0) {                                            // Hardik Kushwaha
+        bst[rootArray] = element;
+        printf("Root inserted successfully!\n");
         return;
     }
-    int i=1;
-    while(i<MaxBST) {
+    while(i < MaxBST) {
         if (element <= bst[i]) {
             if(bst[2*i] == 0) {
                 bst[2*i] = element;
-                printf("Element inserted successfully!\n");
-                lengthMyBST++;
+                printf("Node inserted successfully!\n");
                 break;                                              // Hardik Kushwaha
             } else {
                 i = 2*i;
@@ -1506,8 +1523,7 @@ void insertMyArrayBST() {
         } else {
             if(bst[2*i+1] == 0) {
                 bst[2*i+1] = element;
-                printf("Element inserted successfully!\n");
-                lengthMyBST++;
+                printf("Node inserted successfully!\n");
                 break;
             } else {                                                // Hardik Kushwaha
                 i= 2*i+1;
@@ -1516,15 +1532,87 @@ void insertMyArrayBST() {
     }
 }
 void displayMyArrayBST() {
-    if(bst[1] ==  0) {
-        printf("Empty Tree!\n");
+    if(bst[rootArray] == 0) {
+        printf("Empty Binary Search Tree!\n");
+        return; 
+    }
+    int choice;
+    printf("\nTree Traversal\n1. Inorder Traversal\n2. Preorder Traversal\n3. Postorder Traversal\nEnter the choice: ");
+    scanf("%d",&choice);
+    switch (choice) {
+        case 1:
+            printf("Inorder Traversal of BST is: ");
+            inorderTraversalMyArrayBST(rootArray);   
+            printf("\n");
+            break;
+        case 2:
+            printf("Preorder Traversal of BST is: ");
+            preorderTraversalMyArrayBST(rootArray);   
+            printf("\n");
+            break;
+        case 3:
+            printf("Postorder Traversal of BST is: ");
+            postorderTraversalMyArrayBST(rootArray);
+            printf("\n");
+            break;
+        default:
+            printf("Invalid Choice!\n");
+            break;
+    }
+}
+void inorderTraversalMyArrayBST(int i) {
+    if (bst[i] == '\0') {
+        return;
+    } else {
+        inorderTraversalMyArrayBST(2*i);
+        printf("%d ",bst[i]);
+        inorderTraversalMyArrayBST(2*i+1);
+    }
+}
+void preorderTraversalMyArrayBST(int i) {
+    if (bst[i] == '\0') {
+        return;
+    } else {
+        printf("%d ",bst[i]);
+        preorderTraversalMyArrayBST(2*i);
+        preorderTraversalMyArrayBST(2*i+1);
+    }
+}
+void postorderTraversalMyArrayBST(int i) {
+    if (bst[i] == '\0') {
+        return;
+    } else {
+        postorderTraversalMyArrayBST(2*i);
+        postorderTraversalMyArrayBST(2*i+1);
+        printf("%d ",bst[i]);
+    }
+}
+void searchingMyArrayBST() {
+    if (totalNodesMyArrayBST == 0) {
+        printf("Empty BST!\n");
         return;
     }
-    printf("BST is: ");
-    for(int i=1; i<=(pow(2,lengthMyBST)-1); i++) {                  // Hardik Kushwaha
-        printf("%d  ",bst[i]);
+    int element, state = 0, i = rootArray;
+    printf("Enter the element: ");
+    scanf("%d", &element);
+    while (bst[i] != '\0') {
+        if (element <= bst[i]) {
+            if (element == bst[i]) {
+                state = 1;
+                break;
+            }
+            else {
+                i = 2*i;
+            }
+        } else {
+            i = 2*i + 1;
+        }
     }
-    printf("\n");
+    if (state == 0) {
+        printf("Node not found in BST!\n");
+    } else {
+        printf("Node present in the BST!\n");
+    }
 }
 
 // 12. Linked List implementation of BST
